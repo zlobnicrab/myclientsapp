@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Build Windows app
-        run: npm run build:win
+        run: npx electron-builder --win --publish never
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -49,7 +49,7 @@ jobs:
         run: npm install
 
       - name: Build macOS app
-        run: npm run build:mac
+        run: npx electron-builder --mac --publish never
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
@@ -74,7 +74,7 @@ jobs:
         run: npm install
 
       - name: Build Linux app
-        run: npm run build:linux
+        run: npx electron-builder --linux --publish never
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
