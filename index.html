@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+    <title>Мои клиенты</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-title">Мои клиенты</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Главная страница - список клиентов -->
+        <div id="page-clients-list" class="page active">
+            <div class="search-section">
+                <div class="search-wrapper">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="search-input" class="search-input" placeholder="Поиск...">
+                    <button id="search-clear" class="search-clear hidden" aria-label="Очистить поиск">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6 6 18"></path>
+                            <path d="m6 6 12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <button id="btn-add-client" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                    Добавить клиента
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table class="clients-table">
+                    <thead>
+                        <tr>
+                            <th>Клиент</th>
+                            <th>Телефон</th>
+                            <th>Статус</th>
+                            <th>Терапия</th>
+                            <th>Добавлен</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-table-body">
+                        <!-- Данные будут добавлены через JS -->
+                    </tbody>
+                </table>
+                <div id="empty-state" class="empty-state hidden">
+                    <p>Клиенты не найдены</p>
+                </div>
+            </div>
+
+            <div class="db-path" id="db-path"></div>
+        </div>
+
+        <!-- Страница добавления нового клиента -->
+        <div id="page-new-client" class="page">
+            <button class="btn-back" id="btn-back-from-new">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m15 18-6-6 6-6"></path>
+                </svg>
+                Назад
+            </button>
+
+            <h1 class="page-title">Новый клиент</h1>
+
+            <form id="new-client-form">
+                <!-- Административные данные -->
+                <div class="card">
+                    <h2 class="card-title">Административные данные</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="new-lastName">Фамилия</label>
+                            <input type="text" id="new-lastName" class="form-input" placeholder="Иванов">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-firstName">Имя</label>
+                            <input type="text" id="new-firstName" class="form-input" placeholder="Иван">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-middleName">Отчество</label>
+                            <input type="text" id="new-middleName" class="form-input" placeholder="Иванович">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-phone">Телефон</label>
+                            <input type="tel" id="new-phone" class="form-input" placeholder="+79999999999">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-telegram">Телеграм</label>
+                            <input type="text" id="new-telegram" class="form-input" placeholder="@username">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-email">Почта</label>
+                            <input type="email" id="new-email" class="form-input" placeholder="client@mail.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-age">Возраст</label>
+                            <input type="number" id="new-age" class="form-input" placeholder="99">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-price">Стоимость</label>
+                            <input type="number" id="new-price" class="form-input" placeholder="1000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-therapy">Терапия</label>
+                            <div class="select-wrapper">
+                                <select id="new-therapy" class="form-select">
+                                    <option value="personal">Личная</option>
+                                    <option value="group">Группа</option>
+                                    <option value="supervision">Супервизия</option>
+                                </select>
+                                <svg class="select-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Запрос -->
+                <div class="card">
+                    <h2 class="card-title">Запрос</h2>
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="new-request">Первичный запрос и ожидания</label>
+                            <textarea id="new-request" class="form-textarea" placeholder="С чем пришёл, как формулирует проблему, что хочет"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new-experience">Опыт терапии</label>
+                            <textarea id="new-experience" class="form-textarea" placeholder="Предыдущий опыт психотерапии, что уже пробовал"></textarea>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label class="form-label" for="new-comment">Комментарий</label>
+                            <textarea id="new-comment" class="form-textarea" placeholder="Дополнительная информация"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="btn-cancel-new" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Страница клиента -->
+        <div id="page-client" class="page">
+            <button class="btn-back" id="btn-back-from-client">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m15 18-6-6 6-6"></path>
+                </svg>
+                Назад
+            </button>
+
+            <div class="client-header">
+                <h1 class="page-title" id="client-name"></h1>
+                <div class="status-dropdown" id="status-dropdown">
+                    <button class="status-btn" id="status-btn">
+                        <span id="status-text">Активен</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                    </button>
+                    <div class="status-menu" id="status-menu">
+                        <button class="status-option" data-status="active">Активен</button>
+                        <button class="status-option" data-status="pause">Пауза</button>
+                        <button class="status-option" data-status="archive">Архив</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Административные данные -->
+            <div class="card" id="admin-card">
+                <div class="card-header">
+                    <h2 class="card-title">Административные данные</h2>
+                    <button class="btn-icon" id="btn-edit-admin" aria-label="Редактировать">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                            <path d="m15 5 4 4"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Режим просмотра -->
+                <div id="admin-view" class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Фамилия</span>
+                        <span class="info-value" id="view-lastName"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Имя</span>
+                        <span class="info-value" id="view-firstName"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Отчество</span>
+                        <span class="info-value" id="view-middleName"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Телефон</span>
+                        <span class="info-value" id="view-phone"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Телеграм</span>
+                        <span class="info-value" id="view-telegram"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Почта</span>
+                        <span class="info-value" id="view-email"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Возраст</span>
+                        <span class="info-value" id="view-age"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Стоимость</span>
+                        <span class="info-value" id="view-price"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Терапия</span>
+                        <span class="info-value" id="view-therapy"></span>
+                    </div>
+                </div>
+
+                <!-- Режим редактирования -->
+                <div id="admin-edit" class="hidden">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="edit-lastName">Фамилия</label>
+                            <input type="text" id="edit-lastName" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-firstName">Имя</label>
+                            <input type="text" id="edit-firstName" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-middleName">Отчество</label>
+                            <input type="text" id="edit-middleName" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-phone">Телефон</label>
+                            <input type="tel" id="edit-phone" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-telegram">Телеграм</label>
+                            <input type="text" id="edit-telegram" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-email">Почта</label>
+                            <input type="email" id="edit-email" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-age">Возраст</label>
+                            <input type="number" id="edit-age" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-price">Стоимость</label>
+                            <input type="number" id="edit-price" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-therapy">Терапия</label>
+                            <div class="select-wrapper">
+                                <select id="edit-therapy" class="form-select">
+                                    <option value="personal">Личная</option>
+                                    <option value="group">Группа</option>
+                                    <option value="supervision">Супервизия</option>
+                                </select>
+                                <svg class="select-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-16" id="btn-save-admin">Сохранить изменения</button>
+                </div>
+            </div>
+
+            <!-- Запрос -->
+            <div class="card" id="request-card">
+                <div class="card-header">
+                    <h2 class="card-title">Запрос</h2>
+                    <button class="btn-icon" id="btn-edit-request" aria-label="Редактировать">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                            <path d="m15 5 4 4"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Режим просмотра -->
+                <div id="request-view" class="info-grid info-grid-2">
+                    <div class="info-item">
+                        <span class="info-label">Первичный запрос и ожидания</span>
+                        <span class="info-value" id="view-request"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Опыт терапии</span>
+                        <span class="info-value" id="view-experience"></span>
+                    </div>
+                    <div class="info-item info-item-full">
+                        <span class="info-label">Комментарий</span>
+                        <span class="info-value" id="view-comment"></span>
+                    </div>
+                </div>
+
+                <!-- Режим редактирования -->
+                <div id="request-edit" class="hidden">
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="edit-request">Первичный запрос и ожидания</label>
+                            <textarea id="edit-request" class="form-textarea"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-experience">Опыт терапии</label>
+                            <textarea id="edit-experience" class="form-textarea"></textarea>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label class="form-label" for="edit-comment">Комментарий</label>
+                            <textarea id="edit-comment" class="form-textarea"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-16" id="btn-save-request">Сохранить изменения</button>
+                </div>
+            </div>
+
+            <!-- Сессии -->
+            <button class="btn btn-primary" id="btn-add-session">Добавить сессию</button>
+
+            <div id="sessions-container">
+                <!-- Сессии будут добавлены через JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно подтверждения -->
+    <div id="modal-confirm" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <p class="modal-text" id="modal-text"></p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="modal-cancel">Отмена</button>
+                <button class="btn btn-primary" id="modal-confirm-btn">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно с тремя кнопками (сохранить/не сохранять/отмена) -->
+    <div id="modal-save" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <p class="modal-text" id="modal-save-text">Сохранить изменения перед выходом?</p>
+            <div class="modal-actions modal-actions-3">
+                <button class="btn btn-secondary" id="modal-dont-save">Не сохранять</button>
+                <button class="btn btn-secondary" id="modal-save-cancel">Отмена</button>
+                <button class="btn btn-primary" id="modal-save-btn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

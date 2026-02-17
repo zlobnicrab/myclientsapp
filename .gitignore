@@ -1,0 +1,25 @@
+# Зависимости
+node_modules/
+*.zip
+
+# Сборка
+dist/
+build/
+out/
+
+# Логи
+*.log
+npm-debug.log*
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Настройки IDE
+.idea/
+.vscode/
+*.swp
+
+# Переменные окружения
+.env
+.env.local
